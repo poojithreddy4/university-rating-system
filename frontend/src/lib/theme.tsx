@@ -13,13 +13,4 @@ export const theme = createTheme({
   typography: {
     fontFamily: "Playfair Display Variable",
   },
-  //   components: {
-  //     MuiAppBar: {
-  //       defaultProps: {
-  //         sx: {
-  //           background: HIGHLIGHTS_COLOR,
-  //         },
-  //       },
-  //     },
-  //   },
 });

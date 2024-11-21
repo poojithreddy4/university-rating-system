@@ -2,6 +2,7 @@ import { CssBaseline } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppProvider from "./app-provider";
 import Home from "./pages/home";
+import Insights from "./pages/insights";
 import Login from "./pages/login";
 
 const App = () => {
@@ -17,6 +18,10 @@ const App = () => {
         {
           path: "/",
           element: <Home />,
+        },
+        {
+          path: "/insights/:univId",
+          element: <Insights />,
         },
       ],
     },

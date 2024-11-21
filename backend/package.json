@@ -1,0 +1,19 @@
+{
+  "name": "university-rating-system",
+  "version": "1.0.0",
+  "description": "This is a application that is used to rate the universities and also to verify the ratings of the universities.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poojithreddy4/university-rating-system.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/poojithreddy4/university-rating-system/issues"
+  },
+  "homepage": "https://github.com/poojithreddy4/university-rating-system#readme"
+}
