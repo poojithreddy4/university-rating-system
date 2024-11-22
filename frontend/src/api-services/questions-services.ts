@@ -22,5 +22,6 @@ export const useGetQuestionsService = () => {
   return useQuery({
     queryFn: getQuestionsService,
     queryKey: ["getQuestionsService"],
+    enabled: true,
   });
 };

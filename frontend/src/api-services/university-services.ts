@@ -8,6 +8,8 @@ export type UniversityRecordType = {
   _id: string;
   name: string;
   image: string;
+  overallRating: number;
+  noOfRatings: number;
 };
 
 // All universities
@@ -20,6 +22,7 @@ export const useGetUniversitiesListService = () => {
   return useQuery({
     queryKey: ["useGetUniversitiesListService"],
     queryFn: getUniversitiesListService,
+    enabled: true,
   });
 };
 

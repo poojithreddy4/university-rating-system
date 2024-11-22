@@ -94,13 +94,13 @@ const Insights = () => {
           </Stack>
 
           {/* Overall Rating */}
-          <Typography variant="h5" fontWeight="medium">
-            Overall Rating:{" "}
+          <Typography variant="h5" fontWeight="bold">
+            Overall Rating: {(data?.overallRating ?? 0).toFixed?.(1)} / 5
           </Typography>
 
           {/* Number of reviews */}
           <Typography variant="h6">
-            500 people reviewed this university.
+            {data?.noOfRatings ?? 0} people reviewed this university.
           </Typography>
 
           {/* Rate Now  */}

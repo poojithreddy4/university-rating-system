@@ -10,11 +10,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useState } from "react";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 import {
   QuestionObjectType,
   useGetQuestionsService,
 } from "../api-services/questions-services";
+import { useRateUnivService } from "../api-services/ratings-services";
 import CustomRadio from "./custom-radio";
+import FullScreenLoader from "./full-screen-loader";
 
 const styles = {
   position: "absolute",
@@ -33,16 +37,33 @@ const styles = {
 type Props = Omit<ModalProps, "children">;
 type ResponsesType = { [key: string]: number };
 
-const RateNowModal = (props: Props) => {
+const RateNowModal = ({ onClose, ...props }: Props) => {
   const { data: questionsList } = useGetQuestionsService();
   const [responses, setResponses] = useState<ResponsesType>({});
+  const { mutate: rateUniv, isPending } = useRateUnivService();
+  const { univId } = useParams();
 
-  const handleSubmitRating = useCallback((resps: ResponsesType) => {
-    console.log(resps);
-  }, []);
+  const handleSubmitRating = useCallback(
+    (answers: ResponsesType) => {
+      if (!univId) return;
+      rateUniv(
+        { answers, univId },
+        {
+          onSuccess: (res) => {
+            toast.success(res);
+            if (onClose) {
+              onClose({}, "escapeKeyDown");
+            }
+          },
+        }
+      );
+    },
+    [onClose, rateUniv, univId]
+  );
 
   return (
-    <Modal {...props}>
+    <Modal {...props} onClose={onClose}>
+      {/* Main content */}
       <Stack
         sx={styles}
         component="form"
@@ -51,6 +72,10 @@ const RateNowModal = (props: Props) => {
           handleSubmitRating(responses);
         }}
       >
+        {/* Loading screen */}
+        <FullScreenLoader isLoading={isPending} />
+
+        {/* Content */}
         <Stack sx={{ overflow: "auto" }}>
           {questionsList?.map((q) => (
             <Stack key={q.label}>
