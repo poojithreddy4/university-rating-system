@@ -4,6 +4,7 @@ import AppProvider from "./app-provider";
 import Home from "./pages/home";
 import Insights from "./pages/insights";
 import Login from "./pages/login";
+import Register from "./pages/Register";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const App = () => {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
         },
         {
           path: "/",

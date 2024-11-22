@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "This is a application that is used to rate the universities and also to verify the ratings of the universities.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,44 @@
   "bugs": {
     "url": "https://github.com/poojithreddy4/university-rating-system/issues"
   },
-  "homepage": "https://github.com/poojithreddy4/university-rating-system#readme"
+  "homepage": "https://github.com/poojithreddy4/university-rating-system#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.12.0",
+    "nodemon": "^3.1.7"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "es6": true,
+      "browser": true
+    },
+    "rules": {
+      "brace-style": [
+        "error",
+        "stroustrup"
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+      "no-unused-vars": [
+        "warn"
+      ],
+      "no-var": [
+        "off"
+      ],
+      "one-var": [
+        "off"
+      ]
+    }
+  }
 }
