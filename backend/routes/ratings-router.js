@@ -63,4 +63,25 @@ ratingsRouter.post("/:univId", async (req, res) => {
   }
 });
 
+ratingsRouter.get("/:univId", async (req, res) => {
+  try {
+    const univId = req.params.univId;
+    const userId = req.query.userId;
+    const ratingRec = await Rating.findOne({
+      universityId: univId,
+      userId: userId,
+    });
+    const answers = {};
+    if (ratingRec) {
+      ratingRec.answers.forEach((ans) => {
+        answers[ans.questionId] = ans.answer;
+      });
+    }
+
+    return res.json(answers);
+  } catch (error) {
+    return sendErrorResp(res, error);
+  }
+});
+
 export default ratingsRouter;

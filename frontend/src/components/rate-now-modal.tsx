@@ -9,14 +9,17 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import {
   QuestionObjectType,
   useGetQuestionsService,
 } from "../api-services/questions-services";
-import { useRateUnivService } from "../api-services/ratings-services";
+import {
+  useGetRatingsService,
+  useRateUnivService,
+} from "../api-services/ratings-services";
 import CustomRadio from "./custom-radio";
 import FullScreenLoader from "./full-screen-loader";
 
@@ -42,6 +45,13 @@ const RateNowModal = ({ onClose, ...props }: Props) => {
   const [responses, setResponses] = useState<ResponsesType>({});
   const { mutate: rateUniv, isPending } = useRateUnivService();
   const { univId } = useParams();
+
+  const { data: answerResps } = useGetRatingsService(univId);
+
+  useEffect(() => {
+    if (Object.keys(responses).length > 0) return;
+    setResponses((r) => ({ ...r, ...answerResps }));
+  }, [answerResps, responses]);
 
   const handleSubmitRating = useCallback(
     (answers: ResponsesType) => {

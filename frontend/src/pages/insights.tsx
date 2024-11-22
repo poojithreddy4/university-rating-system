@@ -11,6 +11,7 @@ import {
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import { useGetRatingsService } from "../api-services/ratings-services";
 import { useGetUniversityService } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
 import RateNowModal from "../components/rate-now-modal";
@@ -23,6 +24,10 @@ const Insights = () => {
   const [isRateNowModalOpen, setIsRateNowModalOpen] = useState(false);
 
   const isAuthenticated = getAuthenticatedUser();
+
+  const { data: answerResps } = useGetRatingsService(univId);
+
+  const isRatingAvailable = Object.keys(answerResps ?? {}).length > 0;
 
   const handleRateNowClick = useCallback(() => {
     if (!isAuthenticated) return toast.error("Please login to continue");
@@ -111,7 +116,7 @@ const Insights = () => {
             sx={{ alignSelf: "end" }}
             onClick={handleRateNowClick}
           >
-            Rate Now
+            {isRatingAvailable ? "Edit Ratings" : "Rate Now"}
           </Button>
         </Stack>
       </Stack>

@@ -20,6 +20,12 @@ export const queryClient = new QueryClient({
   },
 });
 
+queryClient.setDefaultOptions({
+  mutations: {
+    onSuccess: () => queryClient.invalidateQueries(),
+  },
+});
+
 declare module "@tanstack/react-query" {
   interface Register {
     defaultError: AxiosError<string>;
