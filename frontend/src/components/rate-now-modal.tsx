@@ -51,7 +51,8 @@ const RateNowModal = ({ onClose, ...props }: Props) => {
   useEffect(() => {
     if (Object.keys(responses).length > 0) return;
     setResponses((r) => ({ ...r, ...answerResps }));
-  }, [answerResps, responses]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answerResps]);
 
   const handleSubmitRating = useCallback(
     (answers: ResponsesType) => {

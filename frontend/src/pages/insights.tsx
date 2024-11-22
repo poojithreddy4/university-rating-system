@@ -11,6 +11,10 @@ import {
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import {
+  useBookmarkUniversityService,
+  useGetBookmarkService,
+} from "../api-services/bookmark-service";
 import { useGetRatingsService } from "../api-services/ratings-services";
 import { useGetUniversityService } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
@@ -27,6 +31,11 @@ const Insights = () => {
 
   const { data: answerResps } = useGetRatingsService(univId);
 
+  const { mutate: toggleBookmark, isPending } = useBookmarkUniversityService();
+
+  const { data: bookmarkObj, isLoading: isLoadingBookmarks } =
+    useGetBookmarkService();
+
   const isRatingAvailable = Object.keys(answerResps ?? {}).length > 0;
 
   const handleRateNowClick = useCallback(() => {
@@ -35,15 +44,17 @@ const Insights = () => {
     setIsRateNowModalOpen(true);
   }, [isAuthenticated]);
 
-  const isBookmarked = false;
-
   if (!univId) return;
+
+  const isBookmarked = bookmarkObj?.[univId];
 
   return (
     <Box>
       <Toolbar />
       {/* Loading Screen */}
-      <FullScreenLoader isLoading={isLoading} />
+      <FullScreenLoader
+        isLoading={isLoading || isPending || isLoadingBookmarks}
+      />
 
       {/* Main Information */}
       <Stack gap="1.5rem">
@@ -87,6 +98,7 @@ const Insights = () => {
               <IconButton
                 onClick={() => {
                   if (!isAuthenticated) return;
+                  toggleBookmark({ universityId: univId });
                 }}
               >
                 {isBookmarked ? (
