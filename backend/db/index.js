@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import { MONGO_URI } from "../config.js";
-import universitiesList from "../data/universities.json" assert { type: "json" };
+import Question from "../models/question-model.js";
 import University from "../models/university-model.js";
+
+import questionsList from "../data/questions.json" assert { type: "json" };
+import universitiesList from "../data/universities.json" assert { type: "json" };
 
 const connectToDB = () => {
   mongoose
@@ -11,6 +14,7 @@ const connectToDB = () => {
 
       //   Seed the DB
       await seedUniversities();
+      await seedQuestions();
     })
     .catch((err) => {
       console.log(err);
@@ -27,4 +31,12 @@ const seedUniversities = async () => {
 
   await University.insertMany(universitiesList);
   console.log("Universities list seeding successful");
+};
+
+const seedQuestions = async () => {
+  const alreadySeeded = (await Question.countDocuments().limit(1)) > 0;
+  if (alreadySeeded) return;
+
+  await Question.insertMany(questionsList);
+  console.log("Questions list seeding successful");
 };

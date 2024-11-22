@@ -12,7 +12,13 @@ export const http = axios.create({
   },
 });
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      enabled: Boolean(getAuthenticatedUser()?.id),
+    },
+  },
+});
 
 declare module "@tanstack/react-query" {
   interface Register {

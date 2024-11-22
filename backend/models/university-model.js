@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema({
   name: String,
   image: String,
-  finalRating: Number,
+  overallRating: Number,
+  noOfRatings: Number,
 });
 
 const University = mongoose.model("universities", schema, "universities");

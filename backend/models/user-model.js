@@ -5,14 +5,8 @@ import { JWT_PRIVATE_KEY } from "../config.js";
 const schema = new mongoose.Schema({
   firstName: String,
   lastName: String,
-  email: String,
+  email: { type: String, unique: true },
   password: String,
-
-  // Relations
-  favouriteUniversities: {
-    type: Map,
-    of: Boolean,
-  },
 });
 
 schema.methods.generateAuthToken = function () {
