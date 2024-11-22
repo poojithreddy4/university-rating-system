@@ -1,12 +1,32 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useLoginUserService } from "../api-services/auth-services";
+import { getAuthenticatedUser, loginUser } from "../lib/utils";
 
 const Login = () => {
   const [details, setDetails] = useState({
     email: "",
     password: "",
   });
+
+  const [errors, setErrors] = useState({
+    email: "",
+  });
+
+  const { mutate: loginUserService, isPending } = useLoginUserService();
+
+  const isAuthenticated = getAuthenticatedUser();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Stack
@@ -17,7 +37,11 @@ const Login = () => {
       component="form"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(details);
+        loginUserService(details, {
+          onSuccess: loginUser,
+          onError: (err) =>
+            setErrors((r) => ({ ...r, email: err?.response?.data ?? "" })),
+        });
       }}
     >
       {/* Login Text */}
@@ -36,6 +60,8 @@ const Login = () => {
             setDetails((r) => ({ ...r, email: target.value }))
           }
           required
+          error={Boolean(errors.email)}
+          helperText={errors.email}
         />
 
         {/* Password */}
@@ -56,6 +82,8 @@ const Login = () => {
           sx={{ mt: "1rem", alignSelf: "start" }}
           type="submit"
           color="warning"
+          startIcon={isPending ? <CircularProgress size="1rem" /> : null}
+          disabled={isPending}
         >
           Login
         </Button>

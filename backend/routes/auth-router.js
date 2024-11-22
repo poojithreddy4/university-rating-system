@@ -6,7 +6,7 @@ const authRouter = express.Router();
 authRouter.post("/login", async (req, res) => {
   const { email: origEmail, password } = req.body;
 
-  if (!email || !password) {
+  if (!origEmail || !password) {
     return res.status(400).send("Missing Email / Password");
   }
 

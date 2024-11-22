@@ -1,6 +1,6 @@
 import { AppBar, Stack, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink, NavLinkProps } from "react-router-dom";
-import { getAuthenticatedUser } from "../lib/utils";
+import { getAuthenticatedUser, logoutUser } from "../lib/utils";
 
 const Navbar = () => {
   const isAuthenticated = getAuthenticatedUser();
@@ -33,7 +33,15 @@ const Navbar = () => {
                   {navlink.label}
                 </CustomNavLink>
               ))
-            : null}
+            : authenticatedNavLinks.map((navlink) => (
+                <CustomNavLink
+                  key={navlink.label}
+                  to={navlink.path}
+                  onClick={navlink.onClick}
+                >
+                  {navlink.label}
+                </CustomNavLink>
+              ))}
         </Stack>
       </Toolbar>
     </AppBar>
@@ -57,6 +65,21 @@ const unAuthenticatedNavLinks = [
   {
     label: "Login",
     path: "/login",
+  },
+];
+
+const authenticatedNavLinks = [
+  {
+    label: "Profile",
+    path: "/profile",
+  },
+  {
+    label: "Logout",
+    path: "/logout",
+    onClick: (e: React.MouseEvent) => {
+      e.preventDefault();
+      logoutUser();
+    },
   },
 ];
 

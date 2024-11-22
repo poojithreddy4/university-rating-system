@@ -1,20 +1,69 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useRegisterUserService } from "../api-services/auth-services";
+import { getAuthenticatedUser, loginUser } from "../lib/utils";
+
+const defaultDetails = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
+type DetailsType = typeof defaultDetails;
 
 const Register = () => {
-  const [details, setDetails] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
+  const [details, setDetails] = useState(defaultDetails);
+  const [errors, setErrors] = useState(defaultDetails);
+
+  const { mutate: registerUser, isPending } = useRegisterUserService();
 
   const handleInputChange = useCallback(
-    ({ target }: React.ChangeEvent<HTMLInputElement>) =>
-      setDetails((r) => ({ ...r, [target.name]: target.value })),
+    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+      if (target.name === "confirmPassword") {
+        setErrors((r) => ({ ...r, confirmPassword: "" }));
+      } else if (target.name === "email") {
+        setErrors((r) => ({ ...r, email: "" }));
+      }
+      setDetails((r) => ({ ...r, [target.name]: target.value }));
+    },
     []
   );
+
+  const handleSubmit = useCallback(
+    (data: DetailsType) => {
+      const { confirmPassword, ...restData } = data;
+      if (data.password !== confirmPassword) {
+        return setErrors((r) => ({
+          ...r,
+          confirmPassword: "Password and confirm password must be same",
+        }));
+      }
+
+      // Api call
+      registerUser(restData, {
+        onSuccess: (res) => loginUser(res),
+        onError: (err) => {
+          setErrors((r) => ({ ...r, email: err?.response?.data ?? "" }));
+        },
+      });
+    },
+    [registerUser]
+  );
+
+  const isAuthenticated = getAuthenticatedUser();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Stack
@@ -25,7 +74,7 @@ const Register = () => {
       component="form"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(details);
+        handleSubmit(details);
       }}
     >
       {/* Login Text */}
@@ -58,6 +107,7 @@ const Register = () => {
             fullWidth
           />
         </Stack>
+
         {/* Email */}
         <TextField
           variant="filled"
@@ -68,6 +118,8 @@ const Register = () => {
           value={details.email}
           onChange={handleInputChange}
           required
+          error={Boolean(errors.email)}
+          helperText={errors.email}
         />
 
         {/* Password */}
@@ -80,6 +132,25 @@ const Register = () => {
           value={details.password}
           onChange={handleInputChange}
           required
+          slotProps={{
+            htmlInput: {
+              minLength: 8,
+            },
+          }}
+        />
+
+        {/* Confirm Password */}
+        <TextField
+          variant="filled"
+          name="confirmPassword"
+          label="Confirm Password"
+          placeholder="Enter your password again"
+          required
+          error={Boolean(errors.confirmPassword)}
+          helperText={errors.confirmPassword}
+          type="password"
+          value={details.confirmPassword}
+          onChange={handleInputChange}
         />
 
         <Button
@@ -87,6 +158,8 @@ const Register = () => {
           sx={{ mt: "1rem", alignSelf: "start" }}
           type="submit"
           color="warning"
+          disabled={isPending}
+          startIcon={isPending ? <CircularProgress size="1rem" /> : null}
         >
           Register
         </Button>
