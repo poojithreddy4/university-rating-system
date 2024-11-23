@@ -31,16 +31,25 @@ bookmarkRouter.post("/", async (req, res) => {
   }
 });
 
-bookmarkRouter.get("/", async (req, res) => {
+bookmarkRouter.get("/:asList?", async (req, res) => {
   try {
     const userId = req.query.userId;
 
-    const bookmarks = await Bookmark.find({ userId: userId });
+    const bookmarks = await Bookmark.find({
+      userId: userId,
+      isBookmarked: true,
+    }).populate("universityId");
 
+    // If the response selected is list
+    if (req.params.asList === "list") {
+      return res.json(bookmarks);
+    }
+
+    // If the response selected is normal booleans
     const bookmarkObj = {};
     if (bookmarks) {
       bookmarks.forEach((b) => {
-        bookmarkObj[b.universityId] = b.isBookmarked;
+        bookmarkObj[b.universityId._id] = b.isBookmarked;
       });
     }
 

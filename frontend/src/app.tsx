@@ -5,6 +5,7 @@ import ProtectedRoutes from "./components/protected-routes";
 import Home from "./pages/home";
 import Insights from "./pages/insights";
 import Login from "./pages/login";
+import Profile from "./pages/profile";
 import Register from "./pages/Register";
 
 const App = () => {
@@ -16,7 +17,12 @@ const App = () => {
         {
           path: "/",
           element: <ProtectedRoutes />,
-          children: [],
+          children: [
+            {
+              path: "/profile",
+              element: <Profile />,
+            },
+          ],
         },
         {
           path: "/login",

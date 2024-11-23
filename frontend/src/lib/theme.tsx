@@ -13,4 +13,16 @@ export const theme = createTheme({
   typography: {
     fontFamily: "Playfair Display Variable",
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          scrollbarColor: `#6b6b6b ${BACKGROUND_COLOR}`,
+          "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+            backgroundColor: BACKGROUND_COLOR,
+          },
+        },
+      },
+    },
+  },
 });

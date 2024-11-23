@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAuthenticatedUser } from "../lib/utils";
 import { http } from "./http";
+import { UniversityRecordType } from "./university-services";
 
 const userId = getAuthenticatedUser()?.id;
 
@@ -35,5 +36,43 @@ export const useGetRatingsService = (univId?: string) => {
     queryKey: ["getRatingsService", univId],
     queryFn: () => getRatingsService(univId),
     enabled: Boolean(univId) && Boolean(userId),
+  });
+};
+
+// Get No.of Reviews
+
+export type UserRatingObjectType = {
+  _id: string;
+  universityId: UniversityRecordType;
+  userId: string;
+  answers: [
+    {
+      questionId: string;
+      answer: number;
+    }
+  ];
+  overallRating: number;
+};
+
+const getUserRatingsService = async () => {
+  const resp = await http.get<UserRatingObjectType[]>("/api/ratings");
+  return resp.data;
+};
+
+export const useGetUserRatingsService = () => {
+  return useQuery({
+    queryKey: ["getUserRatingsService"],
+    queryFn: getUserRatingsService,
+  });
+};
+
+// Delete Rating
+const deleteUserRatingService = async (univId: string) => {
+  const resp = await http.delete<string>(`/api/ratings/${univId}`);
+  return resp.data;
+};
+export const useDeleteUserRatingService = () => {
+  return useMutation({
+    mutationFn: deleteUserRatingService,
   });
 };

@@ -112,7 +112,10 @@ const Insights = () => {
 
           {/* Overall Rating */}
           <Typography variant="h5" fontWeight="bold">
-            Overall Rating: {(data?.overallRating ?? 0).toFixed?.(1)} / 5
+            Overall Rating:{" "}
+            {(data?.noOfRatings ?? 0) === 0
+              ? "N/A"
+              : (data?.overallRating ?? 0).toFixed?.(1) + " / 5"}
           </Typography>
 
           {/* Number of reviews */}
@@ -137,6 +140,7 @@ const Insights = () => {
       <RateNowModal
         open={isRateNowModalOpen}
         onClose={() => setIsRateNowModalOpen(false)}
+        universityId={univId}
       />
     </Box>
   );

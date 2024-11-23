@@ -3,6 +3,7 @@ import bookmarkRouter from "./bookmark-router.js";
 import questionsRouter from "./questions-router.js";
 import ratingsRouter from "./ratings-router.js";
 import universityRouter from "./university-router.js";
+import userRouter from "./user-router.js";
 
 const router = (app) => {
   app.use("/api/auth", authRouter);
@@ -10,6 +11,7 @@ const router = (app) => {
   app.use("/api/questions", questionsRouter);
   app.use("/api/ratings", ratingsRouter);
   app.use("/api/bookmark", bookmarkRouter);
+  app.use("/api/user", userRouter);
 };
 
 export default router;

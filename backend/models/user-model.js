@@ -7,6 +7,11 @@ const schema = new mongoose.Schema({
   lastName: String,
   email: { type: String, unique: true },
   password: String,
+  visibility: {
+    type: String,
+    enum: ["public", "anonymous"],
+    default: "public",
+  },
 });
 
 schema.methods.generateAuthToken = function () {

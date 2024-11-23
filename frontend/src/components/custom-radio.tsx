@@ -7,9 +7,9 @@ import {
   RadioGroupProps,
 } from "@mui/material";
 
-type OptionType = {
-  label: string;
-  value: string | number;
+export type OptionType<S = string, T = string | number> = {
+  label: S;
+  value: T;
 };
 
 type Props = RadioGroupProps & {
@@ -20,7 +20,9 @@ type Props = RadioGroupProps & {
 const CustomRadio = (props: Props) => {
   return (
     <FormControl>
-      <FormLabel id={props.id}>{props.label}</FormLabel>
+      <FormLabel id={props.id} sx={{ color: "black !important" }}>
+        {props.label}
+      </FormLabel>
       <RadioGroup
         aria-labelledby={props.id}
         name={props.name || props.id}
@@ -31,7 +33,7 @@ const CustomRadio = (props: Props) => {
           <FormControlLabel
             key={option.value}
             value={option.value}
-            control={<Radio />}
+            control={<Radio color="warning" />}
             label={option.label}
           />
         ))}

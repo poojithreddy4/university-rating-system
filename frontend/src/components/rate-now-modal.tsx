@@ -1,5 +1,7 @@
+import { Close } from "@mui/icons-material";
 import {
   Button,
+  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -11,7 +13,6 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
 import {
   QuestionObjectType,
   useGetQuestionsService,
@@ -20,6 +21,7 @@ import {
   useGetRatingsService,
   useRateUnivService,
 } from "../api-services/ratings-services";
+import { useGetUniversityService } from "../api-services/university-services";
 import CustomRadio from "./custom-radio";
 import FullScreenLoader from "./full-screen-loader";
 
@@ -37,22 +39,24 @@ const styles = {
   width: { xs: "80vw", md: "60vw" },
 };
 
-type Props = Omit<ModalProps, "children">;
+type Props = Omit<ModalProps, "children"> & {
+  universityId: string;
+};
 type ResponsesType = { [key: string]: number };
 
-const RateNowModal = ({ onClose, ...props }: Props) => {
+const RateNowModal = ({ onClose, universityId: univId, ...props }: Props) => {
   const { data: questionsList } = useGetQuestionsService();
   const [responses, setResponses] = useState<ResponsesType>({});
   const { mutate: rateUniv, isPending } = useRateUnivService();
-  const { univId } = useParams();
 
   const { data: answerResps } = useGetRatingsService(univId);
 
+  const { data: universityDetails, isLoading } =
+    useGetUniversityService(univId);
+
   useEffect(() => {
-    if (Object.keys(responses).length > 0) return;
     setResponses((r) => ({ ...r, ...answerResps }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [answerResps]);
+  }, [answerResps, univId]);
 
   const handleSubmitRating = useCallback(
     (answers: ResponsesType) => {
@@ -84,42 +88,62 @@ const RateNowModal = ({ onClose, ...props }: Props) => {
         }}
       >
         {/* Loading screen */}
-        <FullScreenLoader isLoading={isPending} />
+        <FullScreenLoader isLoading={isPending || isLoading} />
 
         {/* Content */}
-        <Stack sx={{ overflow: "auto" }}>
-          {questionsList?.map((q) => (
-            <Stack key={q.label}>
-              <Typography variant="h5" fontWeight={500}>
-                {q.label}
-              </Typography>
-              <List>
-                {q.questions.map((qn, index) => (
-                  <ListItem key={qn._id}>
-                    <ListItemText
-                      secondaryTypographyProps={{
-                        component: "div",
-                      }}
-                      primary={
-                        <Typography variant="h6">
-                          {index + 1}. {qn.question}
-                        </Typography>
-                      }
-                      secondary={
-                        <CustomRating
-                          onChange={(v) =>
-                            setResponses((r) => ({ ...r, [qn._id]: v }))
-                          }
-                          question={qn}
-                          value={responses[qn._id]}
-                        />
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Stack>
-          ))}
+        <Stack overflow="auto" gap="3rem">
+          <Stack
+            justifyContent="space-between"
+            direction="row"
+            flexWrap="nowrap"
+            alignItems="center"
+          >
+            {/* Label */}
+            <Typography variant="h4" fontWeight="bold">
+              {universityDetails?.name}
+            </Typography>
+
+            {/* Close */}
+            <IconButton onClick={() => onClose?.({}, "backdropClick")}>
+              <Close />
+            </IconButton>
+          </Stack>
+
+          {/* Questions */}
+          <Stack overflow="auto" gap="2rem">
+            {questionsList?.map((q) => (
+              <Stack key={q.label}>
+                <Typography variant="h5" fontWeight={500}>
+                  {q.label}
+                </Typography>
+                <List>
+                  {q.questions.map((qn, index) => (
+                    <ListItem key={qn._id}>
+                      <ListItemText
+                        secondaryTypographyProps={{
+                          component: "div",
+                        }}
+                        primary={
+                          <Typography variant="h6">
+                            {index + 1}. {qn.question}
+                          </Typography>
+                        }
+                        secondary={
+                          <CustomRating
+                            onChange={(v) =>
+                              setResponses((r) => ({ ...r, [qn._id]: v }))
+                            }
+                            question={qn}
+                            value={responses[qn._id]}
+                          />
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Stack>
+            ))}
+          </Stack>
         </Stack>
 
         <Button color="warning" variant="contained" type="submit">

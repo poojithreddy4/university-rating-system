@@ -2,11 +2,21 @@ import { jwtDecode } from "jwt-decode";
 
 const TOKEN_KEY = "token-key";
 
+export type UserVisibilityType = "public" | "anonymous";
+
+export type UserInfoType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  visibility: UserVisibilityType;
+};
+
 export const getAuthenticatedUser = () => {
   try {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) return null;
-    return jwtDecode<{ id: string }>(token);
+    return jwtDecode<UserInfoType>(token);
   } catch (error) {
     console.error(error);
     return null;

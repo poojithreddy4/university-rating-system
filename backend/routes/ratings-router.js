@@ -39,21 +39,7 @@ ratingsRouter.post("/:univId", async (req, res) => {
       }
     );
 
-    const ratingRecs = await Rating.find(
-      { universityId: univId },
-      { overallRating: true }
-    );
-
-    const noOfRatings = ratingRecs?.length;
-    const overallRating = ratingRecs?.reduce((sum, rec) => {
-      sum += rec.overallRating;
-      return sum;
-    }, 0);
-
-    await University.findByIdAndUpdate(univId, {
-      noOfRatings: noOfRatings,
-      overallRating: overallRating / noOfRatings,
-    });
+    await updateUniversityRatingSummary(univId);
 
     return res.send(
       "Your rating has submitted successfully. Thank you for rating!!"
@@ -84,4 +70,55 @@ ratingsRouter.get("/:univId", async (req, res) => {
   }
 });
 
+ratingsRouter.get("/", async (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    const ratingRecs = await Rating.find({ userId: userId }).populate(
+      "universityId"
+    );
+
+    return res.json(ratingRecs);
+  } catch (error) {
+    return sendErrorResp(res, error);
+  }
+});
+
+ratingsRouter.delete("/:univId", async (req, res) => {
+  try {
+    const univId = req.params.univId;
+    const userId = req.query.userId;
+
+    await Rating.findOneAndDelete({ universityId: univId, userId: userId });
+
+    await updateUniversityRatingSummary(univId);
+
+    return res.send("Rating deleted successfully.");
+  } catch (error) {
+    return sendErrorResp(res, error);
+  }
+});
+
 export default ratingsRouter;
+
+/**
+ * =========== Utils ============
+ */
+const updateUniversityRatingSummary = async (univId) => {
+  const ratingRecs = await Rating.find(
+    { universityId: univId },
+    { overallRating: true }
+  );
+
+  const noOfRatings = ratingRecs?.length ?? 0;
+  const overallRating =
+    ratingRecs?.reduce((sum, rec) => {
+      sum += rec.overallRating;
+      return sum;
+    }, 0) ?? 0;
+
+  await University.findByIdAndUpdate(univId, {
+    noOfRatings: noOfRatings,
+    overallRating: noOfRatings === 0 ? 0 : overallRating / noOfRatings,
+  });
+};
