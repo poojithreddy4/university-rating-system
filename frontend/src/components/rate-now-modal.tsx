@@ -49,7 +49,9 @@ const RateNowModal = ({ onClose, universityId: univId, ...props }: Props) => {
   const [responses, setResponses] = useState<ResponsesType>({});
   const { mutate: rateUniv, isPending } = useRateUnivService();
 
-  const { data: answerResps } = useGetRatingsService(univId);
+  const { data: answerRespData } = useGetRatingsService(univId);
+
+  const answerResps = answerRespData?.answers;
 
   const { data: universityDetails, isLoading } =
     useGetUniversityService(univId);

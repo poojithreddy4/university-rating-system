@@ -57,11 +57,15 @@ ratingsRouter.get("/:univId", async (req, res) => {
       universityId: univId,
       userId: userId,
     });
-    const answers = {};
+    const answers = {
+      overallRating: 0,
+      answers: {},
+    };
     if (ratingRec) {
       ratingRec.answers.forEach((ans) => {
-        answers[ans.questionId] = ans.answer;
+        answers.answers[ans.questionId] = ans.answer;
       });
+      answers.overallRating = ratingRec.overallRating;
     }
 
     return res.json(answers);
@@ -94,6 +98,42 @@ ratingsRouter.delete("/:univId", async (req, res) => {
     await updateUniversityRatingSummary(univId);
 
     return res.send("Rating deleted successfully.");
+  } catch (error) {
+    return sendErrorResp(res, error);
+  }
+});
+
+ratingsRouter.get("/others/:univId", async (req, res) => {
+  try {
+    const ratings = await Rating.find({
+      universityId: req.params.univId,
+      userId: { $ne: req.query.userId },
+    })
+      .populate("userId")
+      .populate("answers.questionId");
+
+    const newRatings = [];
+
+    ratings.forEach((rating) => {
+      const modifiedRating = {
+        _id: rating._id,
+        overallRating: rating.overallRating,
+        answers: rating.answers,
+        universityId: rating.universityId,
+        userId: { ...rating.userId },
+      };
+      if (rating.userId.visibility === "anonymous") {
+        modifiedRating.userId.name = "Anonymous";
+        delete modifiedRating.userId.firstName;
+        delete modifiedRating.userId.lastName;
+      } else {
+        modifiedRating.userId.name =
+          rating.userId.firstName + " " + rating.userId.lastName;
+      }
+      newRatings.push(modifiedRating);
+    });
+
+    return res.json(newRatings);
   } catch (error) {
     return sendErrorResp(res, error);
   }

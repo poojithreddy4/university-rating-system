@@ -3,7 +3,13 @@ import {
   Box,
   Button,
   IconButton,
+  Rating,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   Toolbar,
   Tooltip,
   Typography,
@@ -15,10 +21,15 @@ import {
   useBookmarkUniversityService,
   useGetBookmarkService,
 } from "../api-services/bookmark-service";
-import { useGetRatingsService } from "../api-services/ratings-services";
+import {
+  OtherUserUnivRatingsRecordType,
+  useGetOtherPeopleUnivRatings,
+  useGetRatingsService,
+} from "../api-services/ratings-services";
 import { useGetUniversityService } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
 import RateNowModal from "../components/rate-now-modal";
+import ViewRatingsModal from "../components/view-ratings-modal";
 import { getAuthenticatedUser } from "../lib/utils";
 
 const Insights = () => {
@@ -26,15 +37,22 @@ const Insights = () => {
   const { data, isLoading } = useGetUniversityService(univId);
 
   const [isRateNowModalOpen, setIsRateNowModalOpen] = useState(false);
+  const [selectedResponse, setSelectedResponse] =
+    useState<OtherUserUnivRatingsRecordType | null>();
 
   const isAuthenticated = getAuthenticatedUser();
 
-  const { data: answerResps } = useGetRatingsService(univId);
+  const { data: answerRespData } = useGetRatingsService(univId);
+
+  const answerResps = answerRespData?.answers;
 
   const { mutate: toggleBookmark, isPending } = useBookmarkUniversityService();
 
   const { data: bookmarkObj, isLoading: isLoadingBookmarks } =
     useGetBookmarkService();
+
+  const { data: otherRatingsList, isLoading: isLoadingOtherRatings } =
+    useGetOtherPeopleUnivRatings(univId);
 
   const isRatingAvailable = Object.keys(answerResps ?? {}).length > 0;
 
@@ -53,7 +71,9 @@ const Insights = () => {
       <Toolbar />
       {/* Loading Screen */}
       <FullScreenLoader
-        isLoading={isLoading || isPending || isLoadingBookmarks}
+        isLoading={
+          isLoading || isPending || isLoadingBookmarks || isLoadingOtherRatings
+        }
       />
 
       {/* Main Information */}
@@ -118,6 +138,14 @@ const Insights = () => {
               : (data?.overallRating ?? 0).toFixed?.(1) + " / 5"}
           </Typography>
 
+          {/* Your Rating */}
+          <Typography variant="h5" fontWeight="bold">
+            Your Rating:{" "}
+            {isRatingAvailable
+              ? `${answerRespData?.overallRating?.toFixed(1)} / 5`
+              : "N/A"}
+          </Typography>
+
           {/* Number of reviews */}
           <Typography variant="h6">
             {data?.noOfRatings ?? 0} people reviewed this university.
@@ -133,6 +161,57 @@ const Insights = () => {
           >
             {isRatingAvailable ? "Edit Ratings" : "Rate Now"}
           </Button>
+
+          {/* Other people reviews */}
+          <Stack gap="1rem">
+            <Typography variant="h6" fontWeight="bold">
+              Ratings given by other people
+            </Typography>
+
+            {/* Other Ratings Table */}
+            {otherRatingsList && otherRatingsList.length > 0 ? (
+              <Table>
+                {/* Table Head */}
+                <TableHead>
+                  <TableRow>
+                    {tableColumns.map((c) => (
+                      <TableCell variant="head" key={c.headerName}>
+                        {c.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                {/* Table Body */}
+                <TableBody>
+                  {otherRatingsList?.map((item, index) => (
+                    <TableRow key={item._id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{item.userId.name}</TableCell>
+                      <TableCell>
+                        <Rating
+                          readOnly
+                          value={item.overallRating}
+                          precision={0.1}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="small"
+                          color="warning"
+                          onClick={() => setSelectedResponse(item)}
+                        >
+                          View Responses
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Typography variant="h6">No reviews available</Typography>
+            )}
+          </Stack>
         </Stack>
       </Stack>
 
@@ -142,8 +221,38 @@ const Insights = () => {
         onClose={() => setIsRateNowModalOpen(false)}
         universityId={univId}
       />
+
+      {/* View Ratings Modal */}
+      <ViewRatingsModal
+        open={Boolean(selectedResponse)}
+        universityId={univId}
+        answers={selectedResponse?.answers}
+        onClose={() => setSelectedResponse(null)}
+      />
     </Box>
   );
 };
 
 export default Insights;
+
+/**
+ * ======= Table columns =======
+ */
+const tableColumns = [
+  {
+    headerName: "index",
+    label: "S.No.",
+  },
+  {
+    headerName: "name",
+    label: "Name",
+  },
+  {
+    headerName: "rating",
+    label: "Rating Provided",
+  },
+  {
+    headerName: "view-responses",
+    label: "",
+  },
+];

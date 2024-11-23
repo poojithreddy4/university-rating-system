@@ -99,7 +99,12 @@ const Profile = () => {
 
               {/* Average Rating */}
               <InfoCard label="Your Average Rating">
-                <Rating readOnly size="large" value={averageRating} />
+                <Rating
+                  readOnly
+                  size="large"
+                  value={averageRating}
+                  precision={0.1}
+                />
               </InfoCard>
             </Stack>
 
@@ -142,7 +147,8 @@ const Profile = () => {
                               {/* Rating */}
                               <Rating
                                 readOnly
-                                value={Math.round(rating.overallRating)}
+                                value={rating.overallRating}
+                                precision={0.1}
                               />
 
                               {/* Edit */}
@@ -304,14 +310,14 @@ const InfoCard = ({ children, label, ...rest }: InfoCardProps) => {
 
 // ======= Utils ========
 const getAverageRating = (userRatings?: UserRatingObjectType[]) => {
-  if (!userRatings) return 0;
+  if (!userRatings || userRatings.length === 0) return 0;
 
   let finalRating = 0;
   userRatings.forEach((rating) => {
     finalRating += rating.overallRating;
   });
 
-  return Math.round(finalRating / userRatings.length);
+  return finalRating / userRatings.length;
 };
 
 const profileVisibilityOptions: OptionType<string, UserVisibilityType>[] = [

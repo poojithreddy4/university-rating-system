@@ -153,7 +153,7 @@ const UniversityDetailsDisplay = ({
           ? `Based on ratings given by ${univDetails.noOfRatings} people.`
           : "No ratings available"}
       </Typography>
-      <Rating readOnly value={Math.round(univDetails.overallRating)} />
+      <Rating readOnly value={univDetails.overallRating} precision={0.1} />
 
       {/* View more button */}
       <Button
