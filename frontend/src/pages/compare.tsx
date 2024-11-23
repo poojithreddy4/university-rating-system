@@ -11,12 +11,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   UniversityRecordType,
   useGetUniversitiesListService,
 } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
+
+const STORAGE_KEY = "selected-univs";
 
 const Compare = () => {
   const { data: universitiesList = [], isLoading } =
@@ -25,6 +28,12 @@ const Compare = () => {
   const [selectedUnivs, setSelectedUnivs] = useState<UniversityRecordType[]>(
     []
   );
+
+  useEffect(() => {
+    const univs = sessionStorage.getItem(STORAGE_KEY);
+    if (!univs) return;
+    setSelectedUnivs(() => JSON.parse(univs));
+  }, []);
 
   return (
     <Stack>
@@ -54,11 +63,13 @@ const Compare = () => {
           getOptionLabel={(option) => option.name}
           multiple
           disableCloseOnSelect
+          filterSelectedOptions
           value={selectedUnivs}
           onChange={(_, v) => {
             if (v.length > 3) {
               return;
             }
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(v));
             setSelectedUnivs(() => v);
           }}
           renderInput={(params) => (
@@ -145,7 +156,13 @@ const UniversityDetailsDisplay = ({
       <Rating readOnly value={Math.round(univDetails.overallRating)} />
 
       {/* View more button */}
-      <Button variant="outlined" color="warning" sx={{ mt: "auto" }}>
+      <Button
+        component={Link}
+        to={`/insights/${univDetails._id}`}
+        variant="outlined"
+        color="warning"
+        sx={{ mt: "auto" }}
+      >
         View More
       </Button>
     </Stack>

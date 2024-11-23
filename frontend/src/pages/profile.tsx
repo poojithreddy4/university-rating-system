@@ -74,9 +74,14 @@ const Profile = () => {
           </Typography>
 
           {/* User Information */}
-          <Stack direction="row" alignItems="start" gap="2rem">
+          <Stack
+            direction="row"
+            alignItems="start"
+            gap="2rem"
+            flexWrap={{ xs: "wrap", lg: "nowrap" }}
+          >
             {/* Left container */}
-            <Stack width="20rem" gap="2.5rem">
+            <Stack width={{ xs: "100%", lg: "20rem" }} gap="2.5rem">
               {/* User Avatar & Name */}
               <InfoCard>
                 <Box p="0.5rem" border="1px solid lightgray" borderRadius="50%">
@@ -231,7 +236,7 @@ const Profile = () => {
             </Stack>
 
             {/* Right Container */}
-            <Stack width="20rem">
+            <Stack width={{ xs: "100%", lg: "20rem" }}>
               <InfoCard
                 label="Account Settings"
                 alignItems="start"
