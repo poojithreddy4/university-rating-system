@@ -2,6 +2,7 @@ import { CssBaseline, Typography } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppProvider from "./app-provider";
 import ProtectedRoutes from "./components/protected-routes";
+import Compare from "./pages/compare";
 import Home from "./pages/home";
 import Insights from "./pages/insights";
 import Login from "./pages/login";
@@ -21,6 +22,10 @@ const App = () => {
             {
               path: "/profile",
               element: <Profile />,
+            },
+            {
+              path: "/compare",
+              element: <Compare />,
             },
           ],
         },

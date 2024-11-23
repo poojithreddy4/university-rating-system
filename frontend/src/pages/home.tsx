@@ -1,6 +1,6 @@
 import { Search } from "@mui/icons-material";
 import { Autocomplete, Box, Stack, TextField, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetUniversitiesListService } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
 
@@ -56,6 +56,35 @@ const Home = () => {
           navigate(`/insights/${option?._id}`);
         }}
       />
+
+      {/* Compare universities */}
+      <Typography
+        component={Link}
+        to="/compare"
+        mt="1.5rem"
+        fontFamily="cursive"
+        color="warning"
+        variant="h6"
+        sx={({ palette }) => ({
+          fontSize: "1.5rem",
+          position: "relative",
+          marginRight: "1rem",
+          textDecoration: "none",
+          "::after": {
+            content: "''",
+            position: "absolute",
+            bottom: "-0.25rem",
+            left: 0,
+            height: "0.5rem",
+            width: "100%",
+            border: `solid 0.15rem ${palette.warning.main}`,
+            borderColor: `${palette.warning.main} transparent transparent transparent`,
+            borderRadius: "50%",
+          },
+        })}
+      >
+        Compare
+      </Typography>
     </Stack>
   );
 };
