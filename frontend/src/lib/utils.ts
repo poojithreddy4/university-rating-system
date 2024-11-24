@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 
 const TOKEN_KEY = "token-key";
+export const STORAGE_KEY = "selected-univs";
 
 export type UserVisibilityType = "public" | "anonymous";
 
@@ -30,5 +31,6 @@ export const loginUser = (token: string) => {
 
 export const logoutUser = () => {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(STORAGE_KEY);
   window.location.href = "/";
 };

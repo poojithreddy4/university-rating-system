@@ -18,8 +18,7 @@ import {
   useGetUniversitiesListService,
 } from "../api-services/university-services";
 import FullScreenLoader from "../components/full-screen-loader";
-
-const STORAGE_KEY = "selected-univs";
+import { STORAGE_KEY } from "../lib/utils";
 
 const Compare = () => {
   const { data: universitiesList = [], isLoading } =
