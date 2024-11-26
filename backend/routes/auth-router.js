@@ -24,7 +24,13 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/register", async (req, res) => {
   const userInfo = req.body;
 
-  if (!userInfo) {
+  if (
+    !userInfo ||
+    !userInfo?.email ||
+    !userInfo?.password ||
+    !userInfo?.firstName ||
+    !userInfo?.lastName
+  ) {
     return res.status(400).send("Missing Data");
   }
 

@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
-import { MONGO_URI } from "../config.js";
+import { MONGO_URI, MONGO_URI_TEST } from "../config.js";
 import Question from "../models/question-model.js";
 import University from "../models/university-model.js";
 
-import questionsList from "../data/questions.json" assert { type: "json" };
-import universitiesList from "../data/universities.json" assert { type: "json" };
+import questionsList from "../data/questions.json" with { type: "json" };
+import universitiesList from "../data/universities.json" with { type: "json" };
 
 const connectToDB = () => {
   mongoose
-    .connect(MONGO_URI)
+    .connect(process.env.NODE_ENV === "test" ? MONGO_URI_TEST : MONGO_URI)
     .then(async () => {
       console.log("Connected to MongoDB");
 
