@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 temp-data/
+backend/public/
 
 # Editor directories and files
 .vscode/*
