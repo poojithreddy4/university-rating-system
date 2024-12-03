@@ -82,11 +82,11 @@ const Insights = () => {
         <Box
           component="img"
           src={data?.image}
-          width="100vw"
+          width="99vw"
           height="30rem"
           sx={{
             height: "30rem",
-            width: "100vw",
+            width: "99vw",
             objectFit: "cover",
           }}
         />
