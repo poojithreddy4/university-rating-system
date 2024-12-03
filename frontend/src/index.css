@@ -13,3 +13,23 @@ body,
   margin: 0;
   padding: 0;
 }
+
+.react-chatbot-kit-chat-inner-container {
+  background-color: whitesmoke;
+}
+
+.react-chatbot-kit-chat-input {
+  background-color: whitesmoke;
+}
+
+.react-chatbot-kit-chat-bot-message {
+  background-color: #ed6c02;
+}
+
+.react-chatbot-kit-chat-bot-message-arrow {
+  border-right-color: #ed6c02;
+}
+
+.react-chatbot-kit-chat-btn-send {
+  background-color: #ed6c02;
+}
