@@ -5,7 +5,7 @@ import initDB from "./db/index.js";
 import router from "./routes/index.js";
 
 const app = express();
-const STATIC_FILES_DIR = path.join(import.meta.dirname, "public");
+const STATIC_FILES_DIR = path.join(process.cwd(), "public");
 
 app.use(cors());
 app.use(express.json());
