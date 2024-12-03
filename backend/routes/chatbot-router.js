@@ -28,7 +28,6 @@ const questions = {
       const univ = await University.find({ overallRating: { $ne: null } })
         .sort({ overallRating: "asc" })
         .limit(1);
-      console.log("Guru", univ);
       if (univ && univ[0]) {
         return {
           answer: `${univ[0].name}, is the least rated.`,
@@ -46,7 +45,6 @@ chatbotRouter.post("/:id?", async (req, res) => {
 
   if (faqId) {
     const answer = questions[faqId];
-    console.log("Guru", answer);
     if (!answer) {
       return res.json({ answer: "Sorry, no information available this time." });
     }
